@@ -17,5 +17,7 @@ if (NOT MSVC)
     endif ()
 endif ()
 
+set (CMAKE_CXX_FLAGS "-g")
+
 add_subdirectory (lib)
 add_subdirectory (cmd)

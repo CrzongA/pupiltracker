@@ -8,38 +8,42 @@
 void imshowscale(const std::string& name, cv::Mat& m, double scale)
 {
     cv::Mat res;
-    cv::resize(m, res, cv::Size(), scale, scale, cv::INTER_NEAREST);
+    cv::resize(m, res, cv::Size(0, 0), scale, scale, cv::INTER_AREA);
     cv::imshow(name, res);
 }
 
 int main(int argc, char* argv[])
 {
-    if (argc < 2) {
-        std::cerr << "Need filename" << std::endl;
-        return 1;
+    double imgscale;
+    if (argc == 2) {
+        // std::cerr << "Need filename" << std::endl;
+        imgscale = strtod(argv[1], NULL);
+        // return 1;
     }
 
-    std::cout << "Opening " << argv[1] << std::endl;
-    cv::VideoCapture vc(argv[1]);
+    // std::cout << "Opening " << argv[1] << std::endl;
+    cv::VideoCapture vc(0);
     if (!vc.isOpened()) {
         std::cerr << "Could not open " << argv[1] << std::endl;
         return 2;
     }
 
 
-    cv::Mat m;
+    cv::Mat m, n;
     while (true)
     {
         vc >> m;
         if (m.empty())
         {
             vc.release();
-            vc.open(argv[1]);
+            vc.open(0);
             if (!vc.isOpened()) {
-                std::cerr << "Could not open " << argv[1] << std::endl;
+                std::cerr << "Could not open camera" << std::endl;
+                // std::cerr << "Could not open " << argv[1] << std::endl;
                 return 2;
             }
-            vc >> m;
+            vc >> n;
+            cv::resize(n, m, cv::Size(0, 0), imgscale, imgscale, cv::INTER_AREA);
             if (m.empty()) {
                 return 1;
             }
@@ -47,10 +51,10 @@ int main(int argc, char* argv[])
 
 
         pupiltracker::TrackerParams params;
-        params.Radius_Min = 3;
-        params.Radius_Max = 8;
+        params.Radius_Min = 80;
+        params.Radius_Max = 150;
 
-        params.CannyBlur = 1;
+        params.CannyBlur = 1.5;
         params.CannyThreshold1 = 20;
         params.CannyThreshold2 = 40;
         params.StarburstPoints = 0;
@@ -70,10 +74,10 @@ int main(int argc, char* argv[])
         cv::ellipse(m, out.elPupil, pupiltracker::cvx::rgb(255,0,255));
 
 
-        imshowscale("Haar Pupil", out.mHaarPupil, 3);
-        imshowscale("Pupil", out.mPupil, 3);
-        //imshowscale("Thresh Pupil", out.mPupilThresh, 3);
-        imshowscale("Edges", out.mPupilEdges, 3);
+        // imshowscale("Haar Pupil", out.mHaarPupil, 3);
+        // imshowscale("Pupil", out.mPupil, 3);
+        // //imshowscale("Thresh Pupil", out.mPupilThresh, 3);
+        // imshowscale("Edges", out.mPupilEdges, 3);
         cv::imshow("Result", m);
 
         if (cv::waitKey(10) != -1)
