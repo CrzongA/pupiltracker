@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 {
     double imgscale;
     if (argc == 2) {
-        // std::cerr << "Need filename" << std::endl;
+        std::cout << "img scaling parameter " << argv[1] << std::endl;
         imgscale = strtod(argv[1], NULL);
         // return 1;
     }
@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     // std::cout << "Opening " << argv[1] << std::endl;
     cv::VideoCapture vc(0);
     if (!vc.isOpened()) {
-        std::cerr << "Could not open " << argv[1] << std::endl;
+        std::cerr << "Could not open camera" << std::endl;
         return 2;
     }
 
@@ -39,7 +39,6 @@ int main(int argc, char* argv[])
             vc.open(0);
             if (!vc.isOpened()) {
                 std::cerr << "Could not open camera" << std::endl;
-                // std::cerr << "Could not open " << argv[1] << std::endl;
                 return 2;
             }
             vc >> n;
